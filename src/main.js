@@ -1,6 +1,7 @@
 import "regenerator-runtime/runtime";
 
 import * as nearAPI from "near-api-js"
+const { keyStores } = require("near-api-js");
 import getConfig from "./config"
 
 window.nearConfig = getConfig(process.env.NODE_ENV || "development");
@@ -49,7 +50,7 @@ function signedOutFlow() {
       // The contract name that would be authorized to be called by the user's account.
       window.nearConfig.contractName,
       // This is the app name. It can be anything.
-      'Who was the last person to say "Hi!"?',
+      'Who was the last person to say "dddd!"?',
       // We can also provide URLs to redirect on success and failure.
       // The current URL is used by default.
     );
@@ -65,9 +66,26 @@ function signedInFlow() {
   document.getElementById('account-id').innerText = window.accountId;
 
   // Adding an event to a say-hi button.
-  document.getElementById('say-hi').addEventListener('click', () => {
-    // We call say Hi and then update who said Hi last.
-    window.contract.sayHi().then(updateWhoSaidHi);
+  document.getElementById('sign').addEventListener('click', async () => {
+    const accountId = window.accountId;
+    const keyStore = new keyStores.BrowserLocalStorageKeyStore();
+    const keyPair = await keyStore.getKey("testnet", accountId);
+    const pubkey = keyPair.getPublicKey().toString().substr(8);
+    console.log("Pubkey: ", pubkey)
+    const msg = Buffer.from(pubkey);
+
+    const { signature } = keyPair.sign(msg);
+    const messageString = Buffer.from(signature).toString('hex');
+    console.log("Message signed: ", messageString);
+
+    const isValid = keyPair.verify(msg, signature);
+
+    console.log("Signature Valid?:", isValid);
+
+    document.getElementById('address').innerText = pubkey;
+
+    document.getElementById('signature').innerText = messageString;
+
   });
 
   // Adding an event to a sing-out button.
