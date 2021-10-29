@@ -50,7 +50,7 @@ function signedOutFlow() {
       // The contract name that would be authorized to be called by the user's account.
       window.nearConfig.contractName,
       // This is the app name. It can be anything.
-      'Who was the last person to say "dddd!"?',
+      'Who want to sign the message for crust?',
       // We can also provide URLs to redirect on success and failure.
       // The current URL is used by default.
     );
